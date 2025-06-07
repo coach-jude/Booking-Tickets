@@ -5,98 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rockets vs Thunder - Ticket Booking</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gradient-to-br from-red-600 to-orange-500 text-white font-sans">
-
-  <header class="text-center py-10 bg-opacity-90">
-    <h1 class="text-5xl font-extrabold tracking-wide">🚀 Rockets Girls vs ⚡ Thunder Girls</h1>
-    <p class="text-lg mt-3">25 June 2025 • 3:30 PM • Oklahoma City Girls Stadium</p>
-    <p class="text-sm mt-1 italic">Stadium Capacity: 5,000 seats</p>
-    <p id="countdown" class="mt-4 text-2xl font-bold" aria-live="polite"></p>
-  </header>
-
-  <section class="text-center mt-10">
-    <img src="/images/rockets_logo.png" alt="Rockets Logo" class="mx-auto w-32 mb-4">
-    <h2 class="text-3xl font-semibold mb-2">Get Ready for the Ultimate Showdown!</h2>
-    <p class="max-w-xl mx-auto text-lg">Two powerhouses collide in a thrilling 15-minute match that promises nonstop action, skill, and heart. Be there to witness the future of girls' basketball.</p>
-  </section>
-
-  <section class="max-w-2xl mx-auto bg-white text-gray-900 rounded-xl shadow-2xl mt-12 p-8">
-    <h3 class="text-2xl font-bold text-center mb-6">🎟️ Book Your Tickets Now</h3>
-    <form id="bookingForm" autocomplete="off" novalidate>
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label for="name" class="font-semibold">Full Name</label>
-          <input type="text" id="name" class="w-full p-2 border rounded-md" placeholder="Jane Doe" required aria-label="Full Name">
-        </div>
-        <div>
-          <label for="email" class="font-semibold">Email Address</label>
-          <input type="email" id="email" class="w-full p-2 border rounded-md" placeholder="you@example.com" required aria-label="Email Address">
-        </div>
-        <div>
-          <label for="tickets" class="font-semibold">Number of Tickets</label>
-          <input type="number" id="tickets" min="1" max="10" class="w-full p-2 border rounded-md" required aria-label="Number of Tickets">
-        </div>
-        <div>
-          <label for="section" class="font-semibold">Select Section</label>
-          <select id="section" class="w-full p-2 border rounded-md" aria-label="Select Section">
-            <option value="General Admission">General Admission - $10</option>
-            <option value="Courtside">Courtside - $25</option>
-            <option value="VIP Box">VIP Box - $50</option>
-          </select>
-        </div>
-        <div>
-          <label for="seat" class="font-semibold">Select Seat</label>
-          <input type="text" id="seat" class="w-full p-2 border rounded-md" placeholder="e.g. A12" required pattern="[A-Z]\d{1,2}" aria-label="Select Seat">
-        </div>
-
-        <div class="mt-6 border-t pt-4">
-          <h4 class="text-xl font-bold mb-2">💳 Payment Details</h4>
-          <div>
-            <label for="card" class="font-semibold">Card Number</label>
-            <input type="password" id="card" inputmode="numeric" maxlength="19" class="w-full p-2 border rounded-md" placeholder="1234 5678 9012 3456" required aria-label="Card Number">
-          </div>
-          <div class="grid grid-cols-2 gap-4 mt-2">
-            <div>
-              <label for="expiry" class="font-semibold">Expiry Date</label>
-              <input type="text" id="expiry" class="w-full p-2 border rounded-md" placeholder="MM/YY" required pattern="^(0[1-9]|1[0-2])\/\d{2}$" aria-label="Expiry Date">
-            </div>
-            <div>
-              <label for="cvv" class="font-semibold">CVV</label>
-              <input type="password" id="cvv" inputmode="numeric" maxlength="4" class="w-full p-2 border rounded-md" placeholder="123" required pattern="\d{3,4}" aria-label="CVV">
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" id="submitBtn" class="mt-6 bg-red-600 hover:bg-red-700 text-white py-3 rounded-md font-bold text-lg">Confirm Booking</button>
-      </div>
-    </form>
-    <p id="formMessage" class="mt-4 text-center font-semibold"></p>
-  </section>
-
-  <section class="max-w-4xl mx-auto mt-16 text-center">
-    <h3 class="text-2xl font-bold mb-4">🏟️ Seating Map</h3>
-    <img src="/images/seating_chart.png" alt="Seating Chart" class="mx-auto rounded shadow-md">
-    <p class="mt-2 text-sm text-white">Note: VIP and Courtside seats are limited. Book early to secure the best view!</p>
-  </section>
-
-  <section class="max-w-3xl mx-auto mt-16 bg-white text-gray-900 rounded-xl shadow-lg p-6">
-    <h3 class="text-2xl font-bold mb-4 text-center">📊 Past Encounters</h3>
-    <ul class="space-y-2">
-      <li>🏀 <strong>May 2024:</strong> Rockets Girls 28 - 24 Thunder Girls</li>
-      <li>🏀 <strong>Nov 2024:</strong> Thunder Girls 24 - 13 Rockets Girls</li>
-      <li>🏀 <strong>Mar 2025:</strong> Thunder Girls 22 - 20 Rockets Girls</li>
-    </ul>
-  </section>
-
-  <footer class="text-center mt-20 py-8 bg-black bg-opacity-50 text-white text-sm">
-    <p>&copy; 2025 Rockets Girls Basketball | Built by ynbag.com</p>
-    <p>For support, contact <a href="mailto:help@ynbag.com" class="underline">help@ynbag.com</a></p>
-  </footer>
-
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    // Countdown logic
+    let selectedSeat = '';
+    let bookedSeats = ['A3'];
+
+    async function showConfirmation(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const tickets = document.getElementById('tickets').value;
+      const section = document.getElementById('section').value;
+      const card = document.getElementById('card').value;
+      const cvv = document.getElementById('cvv').value;
+      const expiry = document.getElementById('expiry').value;
+      const seat = selectedSeat || document.getElementById('seat').value;
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Booking...';
+
+      if(name && email && tickets && section && card && cvv && expiry && seat) {
+        const cardPattern = /^\d{4} \d{4} \d{4} \d{4}$/;
+        const expiryPattern = /^\d{2}\/\d{2}$/;
+        const cvvPattern = /^\d{3}$/;
+
+        if (!cardPattern.test(card) || !expiryPattern.test(expiry) || !cvvPattern.test(cvv)) {
+          alert('Please enter valid card details.');
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Confirm Booking';
+          return;
+        }
+
+        try {
+          await axios.post('https://example.com/api/bookings', {
+            name, email, tickets, section, seat, card, cvv, expiry
+          });
+
+          alert(`Booking confirmed for ${name}!\n${tickets} ticket(s) in ${section}, Seat: ${seat}\nA confirmation email and QR ticket will be sent to ${email}`);
+          document.getElementById(seat).classList.add('bg-gray-400');
+          document.getElementById(seat).disabled = true;
+        } catch (error) {
+          alert('Booking failed. Please try again.');
+        }
+      } else {
+        alert('Please fill in all fields.');
+      }
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Confirm Booking';
+    }
+
     function startCountdown() {
       const eventDate = new Date('2025-06-25T15:30:00');
       const countdownElement = document.getElementById('countdown');
@@ -121,91 +80,119 @@
       updateCountdown();
       setInterval(updateCountdown, 1000);
     }
-    window.onload = startCountdown;
 
-    // Helper: Validate card, expiry, CVV formats
-    function validateCard(card) {
-      return /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/.test(card.replace(/\s/g, ''));
-    }
-    function validateExpiry(expiry) {
-      return /^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry);
-    }
-    function validateCVV(cvv) {
-      return /^\d{3,4}$/.test(cvv);
-    }
-    function validateSeat(seat) {
-      return /^[A-Z]\d{1,2}$/.test(seat.trim());
+    function selectSeat(seatId) {
+      document.querySelectorAll('.seat').forEach(btn => btn.classList.remove('bg-green-500'));
+      const btn = document.getElementById(seatId);
+      btn.classList.add('bg-green-500');
+      selectedSeat = seatId;
+      document.getElementById('seat').value = seatId;
     }
 
-    // Booking logic
-    document.getElementById('bookingForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
+    function markBookedSeats() {
+      bookedSeats.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+          btn.disabled = true;
+        }
+      });
+    }
 
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const tickets = document.getElementById('tickets').value.trim();
-      const section = document.getElementById('section').value;
-      const seat = document.getElementById('seat').value.trim();
-      const card = document.getElementById('card').value.trim();
-      const cvv = document.getElementById('cvv').value.trim();
-      const expiry = document.getElementById('expiry').value.trim();
-      const submitBtn = document.getElementById('submitBtn');
-      const formMessage = document.getElementById('formMessage');
-
-      // Simple client-side validation before submission
-      if(!name || !email || !tickets || !section || !seat || !card || !cvv || !expiry) {
-        formMessage.textContent = "Please fill in all fields.";
-        formMessage.className = "text-red-600 font-bold mt-4 text-center";
-        return;
-      }
-      if (!/\S+@\S+\.\S+/.test(email)) {
-        formMessage.textContent = "Please enter a valid email address.";
-        formMessage.className = "text-red-600 font-bold mt-4 text-center";
-        return;
-      }
-      if (!validateSeat(seat)) {
-        formMessage.textContent = "Please enter a valid seat (e.g. A12).";
-        formMessage.className = "text-red-600 font-bold mt-4 text-center";
-        return;
-      }
-      if (!validateCard(card)) {
-        formMessage.textContent = "Please enter a valid card number.";
-        formMessage.className = "text-red-600 font-bold mt-4 text-center";
-        return;
-      }
-      if (!validateExpiry(expiry)) {
-        formMessage.textContent = "Please enter expiry date in MM/YY format.";
-        formMessage.className = "text-red-600 font-bold mt-4 text-center";
-        return;
-      }
-      if (!validateCVV(cvv)) {
-        formMessage.textContent = "Please enter a valid 3 or 4 digit CVV.";
-        formMessage.className = "text-red-600 font-bold mt-4 text-center";
-        return;
-      }
-
-      // Disable button while processing
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Booking...";
-
-      // WARNING: Never send card data to insecure endpoints in production!
-      // Only send non-sensitive data unless you use PCI-compliant payment provider.
-      try {
-        await axios.post('https://example.com/api/bookings', {
-          name, email, tickets, section, seat
-        });
-
-        formMessage.textContent = `Booking confirmed for ${name}! ${tickets} ticket(s) in ${section}, Seat: ${seat}. A confirmation email and QR ticket will be sent to ${email}`;
-        formMessage.className = "text-green-600 font-bold mt-4 text-center";
-        document.getElementById('bookingForm').reset();
-      } catch (error) {
-        formMessage.textContent = 'Booking failed. Please try again later.';
-        formMessage.className = "text-red-600 font-bold mt-4 text-center";
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Confirm Booking";
-      }
-    });
+    window.onload = () => {
+      startCountdown();
+      markBookedSeats();
+    };
   </script>
+  <style>
+    .seat:hover:not(:disabled) {
+      transform: scale(1.05);
+      transition: transform 0.2s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-red-600 to-orange-500 text-white font-sans">
+
+  <header class="text-center mt-8">
+    <h1 class="text-4xl font-extrabold">🚀 Rockets vs ⚡ Thunder</h1>
+    <p class="text-xl mt-2">🏀 Live at Toyota Center, Houston | 🗓️ 25 June 2025, 3:30 PM</p>
+    <p id="countdown" class="text-lg mt-2"></p>
+  </header>
+
+  <section class="max-w-3xl mx-auto bg-white text-gray-900 rounded-xl shadow-2xl mt-10 p-8">
+    <h2 class="text-2xl font-bold mb-4">🔙 Past Encounters</h2>
+    <ul class="list-disc list-inside space-y-2">
+      <li>12 Mar 2025: Thunder 105 - 99 Rockets</li>
+      <li>15 Jan 2025: Rockets 113 - 107 Thunder</li>
+      <li>28 Nov 2024: Thunder 98 - 95 Rockets</li>
+    </ul>
+  </section>
+
+  <div class="flex justify-center mt-8">
+  <img src="logo.png" alt="Rockets Girls Logo" class="h-20">
+</div>
+
+  <section class="max-w-2xl mx-auto bg-white text-gray-900 rounded-xl shadow-2xl mt-12 p-8">
+    <h3 class="text-2xl font-bold text-center mb-6">🎟️ Book Your Tickets Now</h3>
+    <form onsubmit="showConfirmation(event)">
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="font-semibold">Name</label>
+          <input type="text" id="name" class="w-full p-2 border rounded-md" required>
+        </div>
+        <div>
+          <label class="font-semibold">Email</label>
+          <input type="email" id="email" class="w-full p-2 border rounded-md" required>
+        </div>
+        <div>
+          <label class="font-semibold">Number of Tickets</label>
+          <input type="number" id="tickets" class="w-full p-2 border rounded-md" required>
+        </div>
+        <div>
+          <label class="font-semibold">Section</label>
+          <select id="section" class="w-full p-2 border rounded-md" required>
+            <option value="">Select Section</option>
+            <option value="Courtside">Courtside</option>
+            <option value="Lower Bowl">Lower Bowl</option>
+            <option value="Upper Deck">Upper Deck</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-semibold">Select Seat</label>
+          <input type="hidden" id="seat" required>
+        </div>
+
+        <div class="mt-4 grid grid-cols-5 gap-2 justify-center">
+          <button type="button" id="A1" onclick="selectSeat('A1')" class="seat p-2 bg-gray-200 text-black rounded hover:bg-yellow-400">A1</button>
+          <button type="button" id="A2" onclick="selectSeat('A2')" class="seat p-2 bg-gray-200 text-black rounded hover:bg-yellow-400">A2</button>
+          <button type="button" id="A3" onclick="selectSeat('A3')" class="seat p-2 bg-gray-200 text-black rounded hover:bg-yellow-400">A3</button>
+          <button type="button" id="A4" onclick="selectSeat('A4')" class="seat p-2 bg-gray-200 text-black rounded hover:bg-yellow-400">A4</button>
+          <button type="button" id="A5" onclick="selectSeat('A5')" class="seat p-2 bg-gray-200 text-black rounded hover:bg-yellow-400">A5</button>
+        </div>
+
+        <div class="mt-6 border-t pt-4">
+          <h4 class="text-xl font-bold mb-2">💳 Payment Details</h4>
+          <div>
+            <label class="font-semibold">Card Number</label>
+            <input type="text" id="card" class="w-full p-2 border rounded-md" placeholder="1234 5678 9012 3456" required>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mt-2">
+            <div>
+              <label class="font-semibold">Expiry Date</label>
+              <input type="text" id="expiry" class="w-full p-2 border rounded-md" placeholder="MM/YY" required>
+            </div>
+            <div>
+              <label class="font-semibold">CVV</label>
+              <input type="text" id="cvv" class="w-full p-2 border rounded-md" placeholder="123" required>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="submitBtn" class="mt-6 bg-red-600 hover:bg-red-700 text-white py-3 rounded-md font-bold text-lg">Confirm Booking</button>
+      </div>
+    </form>
+  </section>
+
 </body>
 </html>
